@@ -1,0 +1,55 @@
+defaults:
+  - loss: ce
+
+_target_: src.models.isic2024_module_tip_finetune.ISIC2024LitModuleTIPFinetune
+
+optimize_config:
+  mode: normal
+  head_name: linear
+  head_lr_coef: null
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.001
+  weight_decay: 1e-3
+
+scheduler:
+  _target_: transformers.get_cosine_schedule_with_warmup
+  _partial_: true
+  num_warmup_steps: 10
+  num_training_steps: ${trainer.max_epochs}
+
+net:
+  _target_: src.models.components.tip_models.TIPBackboneEnsemble
+  ckpt_path: null
+  finetune_strategy_image: trainable
+  finetune_strategy_tabular: trainable
+  finetune_strategy_multimodal: trainable
+  encoder_image:
+    _target_: src.models.components.tip_models.ImageEncoder
+    model_name: tf_efficientnet_b0_ns
+    pretrained: true
+
+  encoder_tabular:
+    _target_: src.models.components.tip_models.TabularTransformerEncoder
+    tabular_embedding_dim: 256
+    num_layers: 2
+    num_heads: 4
+    cat_lengths_tabular: ${data.cat_lengths_tabular}
+    con_lengths_tabular: ${data.con_lengths_tabular}
+    embedding_dropout: 0.1
+    dropout: 0.0
+
+  encoder_multimodal:
+    _target_: src.models.components.tip_models.MultimodalTransformerEncoder
+    multimodal_embedding_dim: 256
+    image_model_name: ${model.net.encoder_image.model_name}
+    tabular_embedding_dim: ${model.net.encoder_tabular.tabular_embedding_dim}
+    num_layers: 2
+    num_heads: 4
+    dropout: 0.0
+
+
+# compile model for faster training with pytorch 2.0
+compile: false

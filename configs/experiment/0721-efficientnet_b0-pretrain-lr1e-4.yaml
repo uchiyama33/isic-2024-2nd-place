@@ -1,0 +1,42 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+#   - override /data: mnist
+  - override /model: timm_model_origin
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tf_efficientnet_b0_ns"]
+
+callbacks:
+  early_stopping:
+    patience: 50
+
+model:
+  optimizer:
+    lr: 1e-4
+  net:
+    model_name: tf_efficientnet_b0_ns
+    my_pretrain_path: /workspace/logs/train/runs/0719-efficientnet_b0-all2024-transV2-lr1e-4-bs256/checkpoints/fold${data.fold}_epoch_*.ckpt
+
+data:
+  batch_size: 128
+  transforms_version: 2
+
+trainer:
+  max_epochs: 200
+  accumulate_grad_batches: 2
+
+experiment_name: 0721-efficientnet_b0-pretrain-lr1e-4
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

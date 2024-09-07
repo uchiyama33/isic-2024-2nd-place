@@ -1,0 +1,57 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /callbacks: default_no_es
+  - override /model: tip_finetune_onlyTabular
+  - override /data: isic2024_tip_finetune
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tip_finetune"]
+
+model:
+  compile: true
+  optimizer:
+    lr: 1e-3
+    weight_decay: 1e-2
+  scheduler:
+    num_warmup_steps: 50
+
+  net:
+    encoder_tabular:
+      tabular_embedding_dim: 384
+      num_layers: 3
+      num_heads: 6
+    dropout_classifier: 0.05
+
+data:
+  img_size: 260
+  batch_size: 64
+  corruption_rate: 0.3
+  transforms_version: 2
+  neg_sampling_ratio: 5
+  tabular_data_version: 3  
+  cat_lengths_tabular: [3,2,21,8,6]
+  con_lengths_tabular: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+
+
+trainer:
+  max_epochs: 300
+  accumulate_grad_batches: 8
+  check_val_every_n_epoch : 1
+  gradient_clip_val: 2.0
+
+experiment_name: 0814-tip_scratch_onlyTabular-l3d384-tabV3-lr1e-3-warmup50-bs_64_8-neg5-ep300-corruption03
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

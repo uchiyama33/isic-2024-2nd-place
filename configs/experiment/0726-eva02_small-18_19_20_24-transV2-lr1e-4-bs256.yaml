@@ -1,0 +1,52 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /data: isic_18_19_20_24
+  - override /model: timm_model_origin
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["eva02_small_patch14_336.mim_in22k_ft_in1k"]
+
+callbacks:
+  early_stopping:
+    patience: 30
+
+model:
+  compile: true
+  optimize_config:
+    mode: finetuning
+    head_name: model.head
+    encoder_lr: ${model.optimizer.lr}
+    encoder_lr_coef: 0.1
+  scheduler:
+    num_warmup_steps: 5
+  optimizer:
+    lr: 1e-4
+  net:
+    model_name: eva02_small_patch14_336.mim_in22k_ft_in1k
+    dropout_encoder: 0.0
+    dropout_head: 0.2
+
+data:
+  img_size: 336
+  batch_size: 32
+  transforms_version: 2
+
+trainer:
+  max_epochs: 200
+  accumulate_grad_batches: 8
+
+experiment_name: 0726-eva02_small-18_19_20_24-transV2-lr1e-4-bs256
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

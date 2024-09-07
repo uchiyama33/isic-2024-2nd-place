@@ -1,0 +1,17 @@
+# @package _global_
+
+# specify here default configuration
+# order of defaults determines the order in which configs override each other
+defaults:
+  - _self_
+  - data: isic2024
+  - paths: default
+  - hydra: default
+  - lgb_params: default
+
+# seed for random number generators in pytorch, numpy and python.random
+seed: 0
+
+optimized_metric: "test/pauc"
+
+log_dir: ${paths.log_dir}/lgb/runs/${lgb_params.name}

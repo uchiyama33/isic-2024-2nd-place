@@ -1,0 +1,44 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /callbacks: default_no_es
+  - override /model: meta_model
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["meta_model"]
+
+model:
+  compile: true
+  optimizer:
+    lr: 1e-3
+  net:
+    num_inputs_num: 68
+    num_inputs_cat: 5
+    input_dropout: 0.3
+    dropout: 0.5
+
+data:
+  batch_size: 128
+  transforms_version: 2
+  neg_sampling_ratio: 10
+  metadata_version: 3  
+  kfold_method: tsgkf
+
+trainer:
+  max_epochs: 50
+  accumulate_grad_batches: 4
+
+experiment_name: 0822-meta-metaV3-lr1e-3-bs512-drop0305-ep50-neg10-tsgkf
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

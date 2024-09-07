@@ -1,0 +1,50 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+# defaults:
+#   - override /data: mnist
+#   - override /model: mnist
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["maxvit_rmlp_base_rw_224.sw_in12k_ft_in1k"]
+
+
+model:
+  compile: true
+  optimize_config:
+    mode: finetuning
+    head_name: model.head
+    encoder_lr: ${model.optimizer.lr}
+    encoder_lr_coef: 0.1
+  scheduler:
+    num_warmup_steps: 0
+  optimizer:
+    lr: 5e-5
+  net:
+    model_name: maxvit_rmlp_base_rw_224.sw_in12k_ft_in1k
+    dropout_encoder: 0.0
+    dropout_head: 0.2
+
+data:
+  img_size: 224
+  batch_size: 32
+  transforms_version: 2
+
+trainer:
+  precision: bf16-mixed
+  max_epochs: 200
+  accumulate_grad_batches: 8
+
+experiment_name: 0723-maxvit_base-transV2-lr5e-5-bs256-drop02
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

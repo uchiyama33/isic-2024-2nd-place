@@ -1,0 +1,70 @@
+name: 0822-0178notebook
+
+version_fe: 1
+
+over_sampling_ratio: 0.003
+under_sampling_ratio: 0.01
+rank_avg: false
+dnn_binning: false
+
+dnn_predictions: []
+
+use_logits: false
+  # my tuning without dnn
+
+models:
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 200
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.03
+      lambda_l1: 0.017841434163032605
+      lambda_l2: 0.05872603574120973
+      max_depth: 8
+      num_leaves: 187
+      colsample_bytree: 0.8352341539647485
+      colsample_bynode: 0.7131918647166682
+      bagging_fraction: 0.4234193432837853
+      bagging_freq: 4
+      min_data_in_leaf: 32
+      scale_pos_weight: 2.33929357177971
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 200
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate: 0.03
+      max_depth: 5
+      scale_pos_weight: 3.7815433304843205
+      l2_leaf_reg: 8.942179821885434
+      subsample: 0.4445061187874661
+      min_data_in_leaf: 54
+      random_strength: 1.1972615114360154
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 200
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.03 
+      lambda: 0.05019062631139
+      alpha: 0.4251584944688427
+      max_depth: 4
+      subsample: 0.4894509826918165
+      colsample_bytree: 0.9643257193792079
+      colsample_bylevel: 0.7953652823196099
+      colsample_bynode: 0.9521065521666686
+      scale_pos_weight: 2.182739568280705
+

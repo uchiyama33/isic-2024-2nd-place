@@ -1,0 +1,59 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /callbacks: default_monitor_loss
+  - override /model: image_meta_model
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["swinv2_base_window12to16_192to256.ms_in22k_ft_in1k"]
+
+callbacks:
+  early_stopping:
+    patience: 50
+
+model:
+  compile: true
+  optimize_config:
+    mode: target_decay
+    target_name: net._orig_mod.image_model
+    lr_base: ${model.optimizer.lr}
+    lr_decay_coef: 0.5
+  optimizer:
+    lr: 5e-4
+  scheduler:
+    num_warmup_steps: 10
+  inter_ce: true
+  net:
+    image_model:
+      model_name: swinv2_base_window12to16_192to256.ms_in22k_ft_in1k
+    meta_model:
+      input_dropout: 0.3
+      dropout: 0.4
+    dropout: 0.0
+    head_mlp: true
+    use_bn: true
+    inter_ce: true
+
+data:
+  img_size: 256
+  batch_size: 32
+  transforms_version: 2
+
+trainer:
+  max_epochs: 150
+  accumulate_grad_batches: 16
+
+experiment_name: 0724-image_meta-swinv2_base-lr5e-4-bs512-bn-inter_ce
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

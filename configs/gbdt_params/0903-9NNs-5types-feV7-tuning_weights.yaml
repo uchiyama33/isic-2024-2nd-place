@@ -1,0 +1,375 @@
+name: 0903-9NNs-5types-feV7-tuning_weights
+
+version_fe: 7
+version_dnn_fe: null
+
+over_sampling_ratio: 0.003
+under_sampling_ratio: 0.01
+rank_avg: false
+dnn_binning: false
+tuning_ensemble_weights: true
+dnn_noise_std: null
+
+dnn_predictions:
+  - name: 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+    dir: /workspace/logs/train/runs/0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf/train_predictions
+  - name: 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf/train_predictions
+  - name: 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf/train_predictions
+  - name: 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs64_2-transV2-ep80
+    dir: /workspace/logs/train/runs/0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs64_2-transV2-ep80/train_predictions
+  - name: 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf/train_predictions
+  - name: 0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80
+    dir: /workspace/logs/train/runs/0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80/train_predictions
+  # - name: 
+  #   dir: /workspace/logs/train/runs//train_predictions
+
+use_logits: false
+
+models:
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+      - 0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80
+    num_boost_round: 300
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.026986084401664452
+      lambda_l1: 0.008549710299400902
+      lambda_l2: 0.003186107647922592
+      max_depth: 7
+      num_leaves: 40
+      colsample_bytree: 0.2580752669783941
+      colsample_bynode: 0.4793005132414699
+      bagging_fraction: 0.4271346258030846
+      bagging_freq: 5
+      min_data_in_leaf: 111
+      scale_pos_weight: 1.4132821655954888
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+      - 0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80
+    num_boost_round: 300
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate:    0.0653296802379571
+      depth: 4
+      scale_pos_weight: 1.7840391214292328
+      l2_leaf_reg:      17.622610867680912
+      subsample:        0.744729271644689
+      bagging_temperature: 0.2034910240255649
+      colsample_bylevel: 0.6261864989312034
+      min_data_in_leaf: 25
+      random_strength: 0.5711249762791267
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+      - 0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80
+    num_boost_round: 300
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.04177564037916822
+      lambda: 0.031417082079839155
+      alpha: 0.0029447274618128933
+      max_depth: 4
+      min_child_weight: 3.6995250850277746
+      subsample: 0.7349498274962395
+      colsample_bytree: 0.44525541493393955
+      colsample_bylevel: 0.30239802003042693
+      colsample_bynode: 0.7176397701863353
+      scale_pos_weight: 1.8961194475259584
+
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.026986084401664452
+      lambda_l1: 0.008549710299400902
+      lambda_l2: 0.003186107647922592
+      max_depth: 7
+      num_leaves: 40
+      colsample_bytree: 0.2580752669783941
+      colsample_bynode: 0.4793005132414699
+      bagging_fraction: 0.4271346258030846
+      bagging_freq: 5
+      min_data_in_leaf: 111
+      scale_pos_weight: 1.4132821655954888
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate:    0.0653296802379571
+      depth: 4
+      scale_pos_weight: 1.7840391214292328
+      l2_leaf_reg:      17.622610867680912
+      subsample:        0.744729271644689
+      bagging_temperature: 0.2034910240255649
+      colsample_bylevel: 0.6261864989312034
+      min_data_in_leaf: 25
+      random_strength: 0.5711249762791267
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.04177564037916822
+      lambda: 0.031417082079839155
+      alpha: 0.0029447274618128933
+      max_depth: 4
+      min_child_weight: 3.6995250850277746
+      subsample: 0.7349498274962395
+      colsample_bytree: 0.44525541493393955
+      colsample_bylevel: 0.30239802003042693
+      colsample_bynode: 0.7176397701863353
+      scale_pos_weight: 1.8961194475259584
+
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+      - 0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.026986084401664452
+      lambda_l1: 0.008549710299400902
+      lambda_l2: 0.003186107647922592
+      max_depth: 7
+      num_leaves: 40
+      colsample_bytree: 0.2580752669783941
+      colsample_bynode: 0.4793005132414699
+      bagging_fraction: 0.4271346258030846
+      bagging_freq: 5
+      min_data_in_leaf: 111
+      scale_pos_weight: 1.4132821655954888
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+      - 0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate:    0.0653296802379571
+      depth: 4
+      scale_pos_weight: 1.7840391214292328
+      l2_leaf_reg:      17.622610867680912
+      subsample:        0.744729271644689
+      bagging_temperature: 0.2034910240255649
+      colsample_bylevel: 0.6261864989312034
+      min_data_in_leaf: 25
+      random_strength: 0.5711249762791267
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+      - 0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.04177564037916822
+      lambda: 0.031417082079839155
+      alpha: 0.0029447274618128933
+      max_depth: 4
+      min_child_weight: 3.6995250850277746
+      subsample: 0.7349498274962395
+      colsample_bytree: 0.44525541493393955
+      colsample_bylevel: 0.30239802003042693
+      colsample_bynode: 0.7176397701863353
+      scale_pos_weight: 1.8961194475259584
+
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+      - 0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.026986084401664452
+      lambda_l1: 0.008549710299400902
+      lambda_l2: 0.003186107647922592
+      max_depth: 7
+      num_leaves: 40
+      colsample_bytree: 0.2580752669783941
+      colsample_bynode: 0.4793005132414699
+      bagging_fraction: 0.4271346258030846
+      bagging_freq: 5
+      min_data_in_leaf: 111
+      scale_pos_weight: 1.4132821655954888
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+      - 0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate:    0.0653296802379571
+      depth: 4
+      scale_pos_weight: 1.7840391214292328
+      l2_leaf_reg:      17.622610867680912
+      subsample:        0.744729271644689
+      bagging_temperature: 0.2034910240255649
+      colsample_bylevel: 0.6261864989312034
+      min_data_in_leaf: 25
+      random_strength: 0.5711249762791267
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+      - 0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.04177564037916822
+      lambda: 0.031417082079839155
+      alpha: 0.0029447274618128933
+      max_depth: 4
+      min_child_weight: 3.6995250850277746
+      subsample: 0.7349498274962395
+      colsample_bytree: 0.44525541493393955
+      colsample_bylevel: 0.30239802003042693
+      colsample_bynode: 0.7176397701863353
+      scale_pos_weight: 1.8961194475259584
+
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.026986084401664452
+      lambda_l1: 0.008549710299400902
+      lambda_l2: 0.003186107647922592
+      max_depth: 7
+      num_leaves: 40
+      colsample_bytree: 0.2580752669783941
+      colsample_bynode: 0.4793005132414699
+      bagging_fraction: 0.4271346258030846
+      bagging_freq: 5
+      min_data_in_leaf: 111
+      scale_pos_weight: 1.4132821655954888
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate:    0.0653296802379571
+      depth: 4
+      scale_pos_weight: 1.7840391214292328
+      l2_leaf_reg:      17.622610867680912
+      subsample:        0.744729271644689
+      bagging_temperature: 0.2034910240255649
+      colsample_bylevel: 0.6261864989312034
+      min_data_in_leaf: 25
+      random_strength: 0.5711249762791267
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+    num_boost_round: 300
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.04177564037916822
+      lambda: 0.031417082079839155
+      alpha: 0.0029447274618128933
+      max_depth: 4
+      min_child_weight: 3.6995250850277746
+      subsample: 0.7349498274962395
+      colsample_bytree: 0.44525541493393955
+      colsample_bylevel: 0.30239802003042693
+      colsample_bynode: 0.7176397701863353
+      scale_pos_weight: 1.8961194475259584

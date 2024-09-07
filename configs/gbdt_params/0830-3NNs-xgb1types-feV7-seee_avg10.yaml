@@ -1,0 +1,65 @@
+name: 0830-3NNs-xgb1types-feV7-seee_avg10
+
+version_fe: 7
+version_dnn_fe: null
+
+over_sampling_ratio: 0.003
+under_sampling_ratio: 0.01
+rank_avg: false
+dnn_binning: false
+tuning_ensemble_weights: false
+dnn_noise_std: null
+
+dnn_predictions:
+  - name: 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+    dir: /workspace/logs/train/runs/0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf/train_predictions
+  # - name: 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+  #   dir: /workspace/logs/train/runs/0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf/train_predictions
+  # - name: 0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30
+  #   dir: /workspace/logs/train/runs/0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30/train_predictions
+  - name: 0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf/train_predictions
+  - name: 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf/train_predictions
+  - name: 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf/train_predictions
+  - name: 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs64_2-transV2-ep80
+    dir: /workspace/logs/train/runs/0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs64_2-transV2-ep80/train_predictions
+  - name: 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf/train_predictions
+  - name: 0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80
+    dir: /workspace/logs/train/runs/0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80/train_predictions
+  # - name: 
+  #   dir: /workspace/logs/train/runs//train_predictions
+
+use_logits: false
+
+models:
+  # tuning mean-std, 200 trials
+  - type: xgb
+    n_seed_averaging: 10
+    use_dnn:
+      - 0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs64_2-transV2-ep80
+      - 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+    num_boost_round: 500
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.031129337134552803
+      lambda: 0.04505845306790353
+      alpha: 0.002190448562745996
+      max_depth: 4
+      min_child_weight: 4.4341936651048615
+      subsample: 0.49658768784673096
+      colsample_bytree: 0.39422559264271273
+      colsample_bylevel: 0.570681254843259
+      colsample_bynode: 0.32808394109399597
+      scale_pos_weight: 1.3841201600628985

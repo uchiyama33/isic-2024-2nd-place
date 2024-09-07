@@ -1,0 +1,66 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /model: tip_pretrain
+  - override /data: isic2024_tip_pretrain
+  - override /callbacks: default_tip_pretrain
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tip_pretrain"]
+
+test: false
+
+model:
+  optimizer:
+    lr: 5e-4
+    weight_decay: 1e-3
+  scheduler:
+    num_warmup_steps: 50
+  encoder_image:
+    model_name: eva02_small_patch14_336.mim_in22k_ft_in1k
+  encoder_tabular:
+    tabular_embedding_dim: 384
+    num_layers: 3
+    num_heads: 6
+    use_layer_scale: false
+    norm_type: post
+  encoder_multimodal:
+    multimodal_embedding_dim: 384
+    num_layers: 3
+    num_heads: 6
+    use_layer_scale: false
+    norm_type: post
+  mlp_image_dim: 1024
+    
+data:
+  img_size: 336
+  batch_size: 64
+  transforms_version: 2
+  neg_sampling_ratio: 50
+  tabular_data_version: 3  
+  cat_lengths_tabular: [3,2,21,8,6]
+  con_lengths_tabular: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+
+
+trainer:
+  max_epochs: 400
+  accumulate_grad_batches: 8
+  check_val_every_n_epoch : 5
+  gradient_clip_val: 2.0
+
+experiment_name: 0808-tip_pretrain-eva02_small_l3d384_postnorm-tabV3-lr5e-4-warmup50-bs_64_8-neg50-ep400
+logger:
+  wandb:
+    project: "TIP_pretrain"
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

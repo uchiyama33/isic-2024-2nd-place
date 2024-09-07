@@ -1,0 +1,76 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /model: tip_finetune
+  - override /data: isic2024_tip_finetune
+  - override /callbacks: default_no_es
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tip_finetune"]
+
+model:
+  compile: true
+  optimizer:
+    lr: 1e-3
+    weight_decay: 1e-3
+  scheduler:
+    num_warmup_steps: 0
+  # optimize_config:
+  #   mode: target_decay
+  #   target_names: 
+  #     - net._orig_mod.encoder_image
+  #     - net._orig_mod.encoder_tabular
+  #     - net._orig_mod.encoder_multimodal
+  #   lr_base: ${model.optimizer.lr}
+  #   lr_decay_coef: 0.01
+  net:
+    finetune_strategy_image: frozen
+    finetune_strategy_tabular: frozen
+    finetune_strategy_multimodal: frozen
+    encoder_image:
+      model_name: convnextv2_nano.fcmae_ft_in22k_in1k
+    encoder_tabular:
+      tabular_embedding_dim: 192
+      num_layers: 2
+      num_heads: 8
+    encoder_multimodal:
+      multimodal_embedding_dim: 192
+      num_layers: 2
+      num_heads: 8
+    use_tabular: false
+    use_multimodal: false
+    ckpt_path: /workspace/logs/train/runs/0822-tip_pretrain-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf/checkpoints/fold${data.fold}_epoch_199.ckpt
+    dropout_classifier: 0.05
+
+data:
+  img_size: 288
+  batch_size: 64
+  transforms_version: 2
+  neg_sampling_ratio: 10
+  tabular_data_version: 3  
+  cat_lengths_tabular: [3,2,21,8,6]
+  con_lengths_tabular: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+  kfold_method: tsgkf
+  num_workers: 10
+
+trainer:
+  max_epochs: 50
+  accumulate_grad_batches: 8
+  check_val_every_n_epoch : 1
+  # gradient_clip_val: 2.0
+
+experiment_name: 0822-tip_frozen_onlyImage-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep50
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}
+

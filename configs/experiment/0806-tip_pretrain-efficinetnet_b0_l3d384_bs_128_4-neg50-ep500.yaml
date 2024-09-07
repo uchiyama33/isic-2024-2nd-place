@@ -1,0 +1,53 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /model: tip_pretrain
+  - override /data: isic2024_tip_pretrain
+  - override /callbacks: default_tip_pretrain
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tip_pretrain"]
+
+test: false
+
+model:
+  optimizer:
+    lr: 1e-3
+  scheduler:
+    num_warmup_steps: 30
+  encoder_tabular:
+    tabular_embedding_dim: 384
+    num_layers: 3
+    num_heads: 6
+  encoder_multimodal:
+    multimodal_embedding_dim: 384
+    num_layers: 3
+    num_heads: 6
+    
+data:
+  batch_size: 128
+  transforms_version: 2
+  neg_sampling_ratio: 50
+
+trainer:
+  max_epochs: 500
+  accumulate_grad_batches: 4
+  check_val_every_n_epoch : 1
+  gradient_clip_val: 2.0
+
+experiment_name: 0806-tip_pretrain-efficinetnet_b0_l3d384_bs_128_4-neg50-ep500
+logger:
+  wandb:
+    project: "TIP_pretrain"
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

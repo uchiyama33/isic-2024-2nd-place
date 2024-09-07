@@ -1,0 +1,13 @@
+_target_: src.data.isic_all_2024_datamodule.ISIC2024DataModule
+data_dir: ${paths.data_dir}
+batch_size: 128 # Needs to be divisible by the number of devices (e.g., if in a distributed setup)
+num_workers: 15
+pin_memory: True
+img_size: 224
+df_name: df_18_19_20_24_train_preprocessed.parquet
+hdf5_name: image_18_19_20_24.hdf5
+neg_sampling_ratio: 20
+fold: 0
+n_fold: 5
+kfold_method: sgkf
+transforms_version: 1

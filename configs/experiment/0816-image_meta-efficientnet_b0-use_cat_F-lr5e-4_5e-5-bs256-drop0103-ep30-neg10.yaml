@@ -1,0 +1,50 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /callbacks: default_no_es
+  - override /model: image_meta_model
+  - override /model/scheduler: mywarmup
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tf_efficientnet_b0_ns"]
+
+model:
+  compile: true
+  optimizer:
+    lr: 5e-4
+  scheduler:
+    warmup_epochs: 0
+    eta_min: 5e-5
+  net:
+    image_model:
+      model_name: tf_efficientnet_b0_ns
+    meta_model:
+      input_dropout: 0.1
+      dropout: 0.3
+      use_cat: false
+    dropout: 0.0
+    head_mlp: true
+
+data:
+  batch_size: 128
+  transforms_version: 2
+  neg_sampling_ratio: 10
+
+trainer:
+  max_epochs: 30
+  accumulate_grad_batches: 2
+
+experiment_name: 0816-image_meta-efficientnet_b0-use_cat_F-lr5e-4_5e-5-bs256-drop0103-ep30-neg10
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

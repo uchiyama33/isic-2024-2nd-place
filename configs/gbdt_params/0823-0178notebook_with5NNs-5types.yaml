@@ -1,0 +1,400 @@
+name: 0823-0178notebook_with5NNs-5types
+
+version_fe: 1
+
+over_sampling_ratio: 0.003
+under_sampling_ratio: 0.01
+rank_avg: false
+dnn_binning: false
+tuning_ensemble_weights: false
+
+dnn_predictions:
+  # - name: 0810-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep80
+  #   dir: /workspace/logs/train/runs/0810-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep80/train_predictions
+  # - name: 0808-tip_finetune-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400-lr1e-3-target_decay001-warmup10-transV2
+  #   dir: /workspace/logs/train/runs/0808-tip_finetune-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400-lr1e-3-target_decay001-warmup10-transV2/train_predictions
+  # - name: 0811-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep80
+  #   dir: /workspace/logs/train/runs/0811-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep80/train_predictions
+  # - name: 0808-tip_frozen-convnextv2_nano_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr1e-3-transV2-ep20
+  #   dir: /workspace/logs/train/runs/0808-tip_frozen-convnextv2_nano_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr1e-3-transV2-ep20/train_predictions
+  # - name: 0808-tip_finetune_onlyImage-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400-lr1e-3-target_decay001-warmup10-transV2
+  #   dir: /workspace/logs/train/runs/0808-tip_finetune_onlyImage-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400-lr1e-3-target_decay001-warmup10-transV2/train_predictions
+  - name: 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+    dir: /workspace/logs/train/runs/0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf/train_predictions
+  - name: 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    dir: /workspace/logs/train/runs/0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf/train_predictions
+  - name: 0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30
+    dir: /workspace/logs/train/runs/0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30/train_predictions
+  - name: 0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf/train_predictions
+  - name: 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf/train_predictions
+  - name: 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf/train_predictions
+
+  # - name: 
+  #   dir: /workspace/logs/train/runs//train_predictions
+
+use_logits: false
+
+models:
+  # tuning mean-std, 200 trials
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    num_boost_round: 805
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.014408561767776523
+      lambda_l1: 1.3374396701545364
+      lambda_l2: 0.0021146631020895913
+      max_depth: 4
+      num_leaves: 229
+      colsample_bytree: 0.496940625436117
+      colsample_bynode: 0.47067623507531015
+      bagging_fraction: 0.9981745225595143
+      bagging_freq: 4
+      min_data_in_leaf: 71
+      scale_pos_weight: 2.947324068359328
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    num_boost_round: 879
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate: 0.01502996236116846
+      max_depth: 4
+      scale_pos_weight: 3.6361198142754994
+      l2_leaf_reg: 9.953400188917042
+      subsample: 0.733882122289605
+      min_data_in_leaf: 100
+      random_strength: 1.965463430282266
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    num_boost_round: 526
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.02366340532031056
+      lambda: 0.5074679961458715
+      alpha: 0.04194199899113613
+      max_depth: 4
+      subsample: 0.7601262966199371
+      colsample_bytree: 0.41712835190525505
+      colsample_bylevel: 0.6550367634306475
+      colsample_bynode: 0.46912508504670875
+      scale_pos_weight: 3.9394624611740583
+
+  # old tuning
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      # - 0808-tip_frozen_onlyImage-convnextv2_nano_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr1e-3-transV2-neg10-ep50
+    num_boost_round: 200
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.03
+      lambda_l1: 0.0592494163746506
+      lambda_l2: 0.11028237732557318
+      max_depth: 4
+      num_leaves: 34
+      colsample_bytree: 0.6986221132007755
+      colsample_bynode: 0.47548298499927616
+      bagging_fraction: 0.9725139264006484
+      bagging_freq: 1
+      min_data_in_leaf: 62
+      scale_pos_weight: 0.8013523678765682
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      # - 0808-tip_frozen_onlyImage-convnextv2_nano_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr1e-3-transV2-neg10-ep50
+    num_boost_round: 200
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      # max_depth:        7　入れ忘れ未調整
+      learning_rate: 0.03
+      max_depth: 5
+      scale_pos_weight: 3.8316742165119746
+      l2_leaf_reg: 0.220601026409132
+      subsample: 0.5778763294094978
+      min_data_in_leaf: 48
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      # - 0808-tip_frozen_onlyImage-convnextv2_nano_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr1e-3-transV2-neg10-ep50
+    num_boost_round: 200
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.03
+      lambda: 0.972580651471495
+      alpha: 0.059163035784056135
+      max_depth: 4
+      subsample: 0.9233771383110415
+      colsample_bytree: 0.7000231467839317
+      colsample_bylevel: 0.7060686791229422
+      colsample_bynode: 0.5034739507546538
+      scale_pos_weight: 3.2957928785662003
+
+  # tuning mean-std, 200 trials
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn: 
+      - 0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf
+    num_boost_round: 461
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.05991962156275095
+      lambda_l1: 0.3748915642276329
+      lambda_l2: 0.13107124325017766
+      max_depth: 4
+      num_leaves: 217
+      colsample_bytree: 0.6368642589800211
+      colsample_bynode: 0.47552690222648797
+      bagging_fraction: 0.5958978586682333
+      bagging_freq: 2
+      min_data_in_leaf: 33
+      scale_pos_weight: 2.5296780159875203
+
+  # not tuned
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf
+    num_boost_round: 200
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      max_depth:        7
+      learning_rate:    0.06936242010150652
+      scale_pos_weight: 2.6149345838209532
+      l2_leaf_reg:      6.216113851699493
+      subsample:        0.6249261779711819
+      min_data_in_leaf: 24
+
+  # not tuned
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf
+    num_boost_round: 200
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate:      0.08501257473292347 
+      lambda:             8.879624125465703 
+      alpha:              0.6779926606782505 
+      max_depth:          6 
+      subsample:          0.6012681388711075 
+      colsample_bytree:   0.8437772277074493 
+      colsample_bylevel:  0.5476090898823716 
+      colsample_bynode:   0.9928601203635129 
+      scale_pos_weight:   3.29440313334688
+
+  # tuning mean-std, 200 trials
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 539
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.016412935361019232
+      lambda_l1: 0.01033930327901298
+      lambda_l2: 0.45596403965936216
+      max_depth: 7
+      num_leaves: 183
+      colsample_bytree: 0.8225568473648835
+      colsample_bynode: 0.6231005430470916
+      bagging_fraction: 0.47468543603681995
+      bagging_freq: 2
+      min_data_in_leaf: 69
+      scale_pos_weight: 0.929753905306647
+  # not tuned
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 200
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate: 0.03
+      max_depth: 5
+      scale_pos_weight: 3.7815433304843205
+      l2_leaf_reg: 8.942179821885434
+      subsample: 0.4445061187874661
+      min_data_in_leaf: 54
+      random_strength: 1.1972615114360154
+  # not tuned
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 200
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.03 
+      lambda: 0.05019062631139
+      alpha: 0.4251584944688427
+      max_depth: 4
+      subsample: 0.4894509826918165
+      colsample_bytree: 0.9643257193792079
+      colsample_bylevel: 0.7953652823196099
+      colsample_bynode: 0.9521065521666686
+      scale_pos_weight: 2.182739568280705
+
+  # tuning mean-std, 100 trials, num_boost_round: 300
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    num_boost_round: 300
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.03188784005753919
+      lambda_l1: 0.17974525638960082
+      lambda_l2: 0.014019635541306861
+      max_depth: 4
+      num_leaves: 88
+      colsample_bytree: 0.6957231204679063
+      colsample_bynode: 0.4832657424736054
+      bagging_fraction: 0.5996553293993062
+      bagging_freq: 7
+      min_data_in_leaf: 70
+      scale_pos_weight: 2.3892914084531
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    num_boost_round: 300
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate: 0.04077092684224172
+      max_depth: 4
+      scale_pos_weight: 1.99859354671139
+      l2_leaf_reg: 3.912371467035743
+      subsample: 0.8308876933879852
+      min_data_in_leaf: 92
+      random_strength: 1.0893027247868179
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    num_boost_round: 300
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.04987220950953905
+      lambda: 6.934299970575735
+      alpha: 5.857381707187871
+      max_depth: 4
+      subsample: 0.922727322127803
+      colsample_bytree: 0.669907821332569
+      colsample_bylevel: 0.5790376137350095
+      colsample_bynode: 0.44802112645621467
+      scale_pos_weight: 3.828836927422758
+
+  # tuning mean-std, 200 trials
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30
+    num_boost_round: 585
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.030409180956447106
+      lambda_l1: 0.5400785842413374
+      lambda_l2: 8.800661031220207
+      max_depth: 4
+      num_leaves: 169
+      colsample_bytree: 0.4721669483188351
+      colsample_bynode: 0.7028108693110531
+      bagging_fraction: 0.971587311686778
+      bagging_freq: 4
+      min_data_in_leaf: 38
+      scale_pos_weight: 3.6003082913160642
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30
+    num_boost_round: 395
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate: 0.08175697136210393
+      max_depth: 4
+      scale_pos_weight: 3.766485251121764
+      l2_leaf_reg: 8.578420234976244
+      subsample: 0.406234192479944
+      min_data_in_leaf: 54
+      random_strength: 1.0896572237616946
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30
+    num_boost_round: 871
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.018100555426401904
+      lambda: 0.1429845608637392
+      alpha: 0.2943495494944757
+      max_depth: 4
+      subsample: 0.6964806724179164
+      colsample_bytree: 0.5918185526107108
+      colsample_bylevel: 0.9529989427462614
+      colsample_bynode: 0.6134676511969379
+      scale_pos_weight: 1.551353584562151

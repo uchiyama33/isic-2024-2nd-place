@@ -1,0 +1,49 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /callbacks: default_monitor_loss
+  - override /model: image_meta_model
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tf_efficientnet_b0_ns"]
+
+callbacks:
+  early_stopping:
+    patience: 50
+
+model:
+  compile: true
+  optimizer:
+    lr: 5e-4
+  net:
+    image_model:
+      model_name: tf_efficientnet_b0_ns
+    meta_model:
+      input_dropout: 0.3
+      dropout: 0.5
+    dropout: 0.0
+    head_mlp: true
+    use_bn: true
+
+data:
+  batch_size: 128
+  transforms_version: 2
+
+trainer:
+  max_epochs: 200
+  accumulate_grad_batches: 4
+
+experiment_name: 0724-image_meta-efficientnet_b0-lr5e-4-bs512-bn
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

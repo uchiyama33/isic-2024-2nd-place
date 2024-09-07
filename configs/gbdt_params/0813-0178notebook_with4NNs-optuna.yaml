@@ -1,0 +1,80 @@
+name: 0813-0178notebook_with4NNs-optuna
+
+version_fe: 1
+
+sampling_ratio: 0.01
+
+dnn_predictions:
+  # - name: 0810-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep80
+  #   dir: /workspace/logs/train/runs/0810-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep80/train_predictions
+  # - name: 0808-tip_finetune-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400-lr1e-3-target_decay001-warmup10-transV2
+  #   dir: /workspace/logs/train/runs/0808-tip_finetune-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400-lr1e-3-target_decay001-warmup10-transV2/train_predictions
+  # - name: 0811-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep80
+  #   dir: /workspace/logs/train/runs/0811-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep80/train_predictions
+  # - name: 0808-tip_frozen-convnextv2_nano_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr1e-3-transV2-ep20
+  #   dir: /workspace/logs/train/runs/0808-tip_frozen-convnextv2_nano_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr1e-3-transV2-ep20/train_predictions
+  # - name: 0808-tip_finetune_onlyImage-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400-lr1e-3-target_decay001-warmup10-transV2
+  #   dir: /workspace/logs/train/runs/0808-tip_finetune_onlyImage-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400-lr1e-3-target_decay001-warmup10-transV2/train_predictions
+  - name: 0813-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep150-neg5
+    dir: /workspace/logs/train/runs/0813-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep150-neg5/train_predictions
+  - name: 0812-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep150-neg5
+    dir: /workspace/logs/train/runs/0812-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep150-neg5/train_predictions
+  - name: 0808-tip_finetune-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400-lr1e-3-target_decay001-warmup20-transV2-ep100-neg5
+    dir: /workspace/logs/train/runs/0808-tip_finetune-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400-lr1e-3-target_decay001-warmup20-transV2-ep100-neg5/train_predictions
+  - name: 0813-efficientnet_b0-scratch-transV2-lr3e-3-warmup50-bs128_2-ep500-neg5
+    dir: /workspace/logs/train/runs/0813-efficientnet_b0-scratch-transV2-lr3e-3-warmup50-bs128_2-ep500-neg5/train_predictions
+
+  # - name: 
+  #   dir: /workspace/logs/train/runs//train_predictions
+
+use_logits: false
+
+models:
+  - type: lgb
+    params:
+      objective: "binary"
+      verbosity: -1
+      n_iter: 400
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      lambda_l1: 0.24068729609208517
+      lambda_l2: 1.1577124994741572
+      learning_rate: 0.016494361794973357
+      max_depth: 4
+      num_leaves: 113
+      colsample_bytree: 0.6605397915051704
+      colsample_bynode: 0.47152864499475233
+      bagging_fraction: 0.5680397239093427
+      bagging_freq: 2
+      min_data_in_leaf: 99
+      scale_pos_weight: 1.772722122725422
+
+  - type: cb
+    params:
+      loss_function:    Logloss
+      iterations:       400
+      verbose:          False
+      random_state:     ${seed}
+      # max_depth:        7　入れ忘れ未調整
+      learning_rate: 0.01546123046078091
+      scale_pos_weight: 2.4786265615426277
+      l2_leaf_reg: 5.305624256632675
+      subsample: 0.6577571782829218
+      min_data_in_leaf: 98
+
+  - type: xgb
+    params:
+      enable_categorical: True
+      n_estimators: 400
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.01634337561808913
+      lambda: 0.5439279440174319
+      alpha: 0.17355322812668184
+      max_depth: 4
+      subsample: 0.8042771499041813
+      colsample_bytree: 0.4782412517198251
+      colsample_bylevel: 0.6931840336153047
+      colsample_bynode: 0.6517093736939129
+      scale_pos_weight: 1.1060224220987076
+

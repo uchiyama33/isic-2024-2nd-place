@@ -1,0 +1,47 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.154.0/containers/ubuntu
+{
+    "dockerComposeFile": [
+        "docker-compose.yml"
+    ],
+    "service": "app",
+    "workspaceFolder": "/workspace",
+    // Set *default* container specific settings.json values on container create.
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+            // Set *default* container specific settings.json values on container create.
+            "settings": {
+                "python.defaultInterpreterPath": "/opt/conda/bin/python",
+                "python.languageServer": "Pylance",
+                "black-formatter.args": [
+                    "--line-length=110"
+                ],
+                "flake8.args": [
+                    "--max-line-length",
+                    "110"
+                ],
+                "python.analysis.autoFormatStrings": true
+            },
+            "extensions": [
+                "MS-CEINTL.vscode-language-pack-ja",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-toolsai.jupyter",
+                "ms-toolsai.jupyter-keymap",
+                "ms-toolsai.jupyter-renderers",
+                "VisualStudioExptTeam.vscodeintellicode",
+                "ms-python.black-formatter",
+                "ms-python.flake8",
+                "ms-azuretools.vscode-docker"
+            ],
+        }
+    },
+    "onCreateCommand": "bash init.sh",
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // "postCreateCommand": "pip3 install -r requirements.txt"
+    // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+    // "remoteUser": "vscode"
+}

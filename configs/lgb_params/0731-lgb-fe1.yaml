@@ -1,0 +1,22 @@
+name: 0731-lgb-fe1
+
+version_fe: 1
+
+params:
+  objective: "binary"
+  metric: "binary_logloss"
+  boosting_type: "gbdt"
+  verbosity: -1
+  seed: ${seed}
+  bagging_fraction: 0.5902709620094059
+  bagging_freq: 6
+  feature_fraction: 0.88
+  feature_pre_filter: False
+  lambda_l1: 0.45565678596274184
+  lambda_l2: 6.175765148656141
+  min_child_samples: 20
+  num_leaves: 5
+  learning_rate: 0.005
+
+num_boost_round: 10000
+early_stopping: 300

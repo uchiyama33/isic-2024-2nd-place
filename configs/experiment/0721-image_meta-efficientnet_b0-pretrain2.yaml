@@ -1,0 +1,53 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+#   - override /data: mnist
+  - override /model: image_meta_model
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tf_efficientnet_b0_ns"]
+
+callbacks:
+  early_stopping:
+    patience: 50
+
+model:
+  optimize_config:
+    mode: target_decay
+    target_name: net.image_model
+    lr_base: ${model.optimizer.lr}
+    lr_decay_coef: 0
+  scheduler:
+    num_warmup_steps: 0
+  net:
+    image_model:
+      model_name: tf_efficientnet_b0_ns
+      my_pretrain_path: /workspace/logs/train/runs/0721-efficientnet_b0-transV2-lr1e-4-bs256/checkpoints/fold${data.fold}_epoch_*.ckpt
+    meta_model:
+      input_dropout: 0.1
+      dropout: 0.3
+    dropout: 0.0
+    head_mlp: true
+
+data:
+  batch_size: 128
+  transforms_version: 2
+
+trainer:
+  max_epochs: 200
+  accumulate_grad_batches: 2
+
+experiment_name: 0721-image_meta-efficientnet_b0-pretrain2
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

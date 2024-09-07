@@ -1,0 +1,41 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /callbacks: default_monitor_loss
+  - override /model: timm_model_origin
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tf_efficientnet_b0_ns"]
+
+callbacks:
+  early_stopping:
+    patience: 50
+
+model:
+  scheduler:
+    num_warmup_steps: 30
+  optimizer:
+    lr: 1e-4
+
+data:
+  batch_size: 128
+  transforms_version: 3
+
+trainer:
+  max_epochs: 200
+  accumulate_grad_batches: 2
+
+experiment_name: 0721-efficientnet_b0-transV3-lr1e-4-bs256
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

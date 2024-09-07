@@ -1,0 +1,28 @@
+defaults:
+  - loss: ce
+  - scheduler: transformers_warmup
+
+_target_: src.models.isic2024_module_ce.ISIC2024LitModule
+
+use_image: false
+use_metadata: true
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.001
+  weight_decay: 1e-3
+
+optimize_config:
+  mode: normal
+
+net:
+  _target_: src.models.components.meta_model.ISICModel
+  num_inputs_num: 34
+  num_inputs_cat: 4
+
+# compile model for faster training with pytorch 2.0
+compile: false
+
+tta: false
+preds_save_path: ${log_dir}/test_predictions/fold{data.fold}.pt

@@ -1,0 +1,61 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /model: tip_pretrain
+  - override /data: isic2024_tip_pretrain
+  - override /callbacks: default_tip_pretrain
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tip_pretrain"]
+
+test: false
+
+model:
+  optimizer:
+    lr: 1e-3
+    weight_decay: 1e-3
+  scheduler:
+    num_warmup_steps: 30
+  encoder_image:
+    model_name: tf_efficientnet_b2.ns_jft_in1k
+  encoder_tabular:
+    tabular_embedding_dim: 384
+    num_layers: 3
+    num_heads: 6
+  encoder_multimodal:
+    multimodal_embedding_dim: 384
+    num_layers: 3
+    num_heads: 6
+    
+data:
+  img_size: 260
+  batch_size: 64
+  transforms_version: 8
+  neg_sampling_ratio: 50
+  tabular_data_version: 3  
+  cat_lengths_tabular: [3,2,21,8,6]
+  con_lengths_tabular: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+
+
+trainer:
+  max_epochs: 400
+  accumulate_grad_batches: 8
+  check_val_every_n_epoch : 5
+  gradient_clip_val: 1.0
+
+experiment_name: 0808-tip_pretrain-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400
+logger:
+  wandb:
+    project: "TIP_pretrain"
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

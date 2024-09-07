@@ -1,0 +1,47 @@
+defaults:
+  - loss: ce
+  - scheduler: transformers_warmup
+
+_target_: src.models.isic2024_module_ce.ISIC2024LitModule
+
+use_image: true
+use_metadata: true
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.001
+  weight_decay: 1e-3
+
+optimize_config:
+  mode: normal
+  head_name: linear
+  head_lr_coef: 0.1
+  
+net:
+  _target_: src.models.components.image_meta_model.ISICModel
+  image_model:
+    _target_: src.models.components.timm_model_origin.ISICModel
+    model_name: tf_efficientnet_b0_ns
+    num_classes: 2
+    pretrained: true
+  meta_model:
+    _target_: src.models.components.meta_model.ISICModel
+    num_inputs_num: 34
+    num_inputs_cat: 4
+    hidden_dims: 512
+    feature_dims: 128
+    dropout: 0.3
+    input_dropout: 0.0
+  num_classes: 2
+  dropout: 0.5
+  head_mlp: false
+  hidden_dims: 256
+  use_bn: false
+  inter_ce: false
+
+# compile model for faster training with pytorch 2.0
+compile: false
+
+tta: false
+preds_save_path: ${log_dir}/test_predictions/fold{data.fold}.pt

@@ -1,0 +1,75 @@
+name: 0831-feV8-for_null_importance-s3
+
+version_fe: 8
+version_dnn_fe: null
+
+over_sampling_ratio: 0.003
+under_sampling_ratio: 0.01
+rank_avg: false
+dnn_binning: false
+tuning_ensemble_weights: true
+dnn_noise_std: null
+
+dnn_predictions: []
+use_logits: false
+
+models:
+  # tuning mean-std, 200 trials
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 300
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.014840393406332262
+      lambda_l1: 0.4550382099562666
+      lambda_l2: 0.015833423655362465
+      max_depth: 8
+      num_leaves: 104
+      colsample_bytree: 0.8867990492691106
+      colsample_bynode: 0.6039274036613219
+      feature_fraction: 0.702493250844376
+      bagging_fraction: 0.518767776339362
+      bagging_freq: 7
+      min_data_in_leaf: 72
+      scale_pos_weight: 1.0077655367590275
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 300
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate: 0.08306175400949516
+      depth: 4
+      scale_pos_weight: 3.666738617946623
+      l2_leaf_reg: 25.695964989555822
+      subsample: 0.4705645110608392
+      bagging_temperature: 0.31073955700788664
+      colsample_bylevel: 0.5086098319541799
+      min_data_in_leaf: 86
+      random_strength: 1.274726127097205
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 300
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.039536064955447744
+      lambda: 4.464864175907874
+      alpha: 0.041097040708152885
+      max_depth: 7
+      min_child_weight: 4.47877533479706
+      subsample: 0.6289560279391467
+      colsample_bytree: 0.584575629335291
+      colsample_bylevel: 0.9196970905487073
+      colsample_bynode: 0.7823892802727448
+      scale_pos_weight: 2.242942891407271

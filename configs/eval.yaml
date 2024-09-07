@@ -1,0 +1,20 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - data: isic2024 # choose datamodule with `test_dataloader()` for evaluation
+  - model: timm_model_origin
+  - logger: null
+  - trainer: default
+  - paths: default
+  - extras: default
+  - hydra: default
+  - experiment: null
+
+task_name: "eval"
+
+tags: ["dev"]
+
+optimized_metric: "test/pauc"
+# passing checkpoint path is necessary for evaluation
+ckpt_path: ???

@@ -1,0 +1,44 @@
+name: 0730-fe-eva02_s-im_en_b0-im_cn_t
+
+dnn_predictions:
+  - name: 0722-eva02_small-transV2-lr5e-5-bs256-drop02
+    dir: /workspace/logs/train/runs/0722-eva02_small-transV2-lr5e-5-bs256-drop02/train_predictions
+  - name: 0724-image_meta-efficientnet_b0-lr5e-4-bs512-bn
+    dir: /workspace/logs/train/runs/0724-image_meta-efficientnet_b0-lr5e-4-bs512-bn/train_predictions
+  - name: 0725-image_meta-convnextv2_tiny-lr5e-4-bs512-bn-inter_ce-metaPre10
+    dir: /workspace/logs/train/runs/0725-image_meta-convnextv2_tiny-lr5e-4-bs512-bn-inter_ce-metaPre10/train_predictions
+use_logits: false
+
+version_fe: 1
+
+lightgbm:
+  params:
+    objective: "binary"
+    metric: "binary_logloss"
+    boosting_type: "gbdt"
+    verbosity: -1
+    seed: ${seed}
+    bagging_fraction: 0.95
+    bagging_freq: 3
+    feature_fraction: 0.5
+    feature_pre_filter: False
+    lambda_l1: 8.28831718213344e-05
+    lambda_l2: 1.2918444531134912e-05
+    min_child_samples: 50
+    num_leaves: 8
+    learning_rate: 0.005
+  num_boost_round: 3000
+  early_stopping: 100
+
+catboost:
+  params:
+    objective: 'Logloss'
+    random_state: ${seed}
+    colsample_bylevel: 0.3
+    learning_rate: 0.01
+    max_depth: 8
+    l2_leaf_reg: 5
+    verbose: 1
+    iterations: 3000
+    early_stopping_rounds: 100
+    metric_period: 20

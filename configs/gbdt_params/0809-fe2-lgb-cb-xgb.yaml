@@ -1,0 +1,54 @@
+name: 0809-fe2-lgb-cb-xgb
+
+version_fe: 2
+
+sampling_ratio: 0.01
+
+models:
+  - type: lgb
+    params:
+      objective: "binary"
+      verbosity: -1
+      n_iter: 200
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      lambda_l1: 0.08758718919397321
+      lambda_l2: 0.0039689175176025465
+      learning_rate: 0.03231007103195577
+      max_depth: 4
+      num_leaves: 103
+      colsample_bytree: 0.8329551585827726 
+      colsample_bynode: 0.4025961355653304
+      bagging_fraction: 0.7738954452473223
+      bagging_freq: 4
+      min_data_in_leaf: 85
+      scale_pos_weight: 2.7984184778875543
+
+  - type: cb
+    params:
+      loss_function:    Logloss
+      iterations:       200
+      verbose:          False
+      random_state:     ${seed}
+      max_depth:        7
+      learning_rate:    0.06936242010150652
+      scale_pos_weight: 2.6149345838209532
+      l2_leaf_reg:      6.216113851699493
+      subsample:        0.6249261779711819
+      min_data_in_leaf: 24
+
+  - type: xgb
+    params:
+      enable_categorical: True
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate:      0.08501257473292347 
+      lambda:             8.879624125465703 
+      alpha:              0.6779926606782505 
+      max_depth:          6 
+      subsample:          0.6012681388711075 
+      colsample_bytree:   0.8437772277074493 
+      colsample_bylevel:  0.5476090898823716 
+      colsample_bynode:   0.9928601203635129 
+      scale_pos_weight:   3.29440313334688
+

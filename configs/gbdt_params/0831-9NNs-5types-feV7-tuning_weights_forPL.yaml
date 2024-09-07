@@ -1,0 +1,366 @@
+name: 0831-9NNs-5types-feV7-tuning_weights_forPL
+
+version_fe: 7
+version_dnn_fe: null
+
+over_sampling_ratio: 0.003
+under_sampling_ratio: 0.01
+rank_avg: false
+dnn_binning: false
+tuning_ensemble_weights: true
+dnn_noise_std: null
+
+dnn_predictions:
+  - name: 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+    dir: /workspace/logs/train/runs/0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf/train_predictions
+  - name: 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf/train_predictions
+  - name: 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf/train_predictions
+  - name: 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs64_2-transV2-ep80
+    dir: /workspace/logs/train/runs/0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs64_2-transV2-ep80/train_predictions
+  - name: 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf/train_predictions
+  - name: 0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80
+    dir: /workspace/logs/train/runs/0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80/train_predictions
+  # - name: 
+  #   dir: /workspace/logs/train/runs//train_predictions
+
+use_logits: false
+
+models:
+  # tuning mean-std, 200 trials
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 300
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.014840393406332262
+      lambda_l1: 0.4550382099562666
+      lambda_l2: 0.015833423655362465
+      max_depth: 8
+      num_leaves: 104
+      colsample_bytree: 0.8867990492691106
+      colsample_bynode: 0.6039274036613219
+      feature_fraction: 0.702493250844376
+      bagging_fraction: 0.518767776339362
+      bagging_freq: 7
+      min_data_in_leaf: 72
+      scale_pos_weight: 1.0077655367590275
+
+  # - type: cb
+  #   n_seed_averaging: 3
+  #   use_dnn: []
+  #   num_boost_round: 300
+  #   params:
+  #     loss_function:    Logloss
+  #     verbose:          False
+  #     random_state:     ${seed}
+  #     learning_rate: 0.08306175400949516
+  #     depth: 4
+  #     scale_pos_weight: 3.666738617946623
+  #     l2_leaf_reg: 25.695964989555822
+  #     subsample: 0.4705645110608392
+  #     bagging_temperature: 0.31073955700788664
+  #     colsample_bylevel: 0.5086098319541799
+  #     min_data_in_leaf: 86
+  #     random_strength: 1.274726127097205
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 300
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.039536064955447744
+      lambda: 4.464864175907874
+      alpha: 0.041097040708152885
+      max_depth: 7
+      min_child_weight: 4.47877533479706
+      subsample: 0.6289560279391467
+      colsample_bytree: 0.584575629335291
+      colsample_bylevel: 0.9196970905487073
+      colsample_bynode: 0.7823892802727448
+      scale_pos_weight: 2.242942891407271
+
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs64_2-transV2-ep80
+      - 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+    num_boost_round: 500
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.02697860939272997
+      lambda_l1: 0.024973839560521648
+      lambda_l2: 0.006308684663783449
+      max_depth: 4
+      num_leaves: 34
+      colsample_bytree: 0.2700681489215218
+      colsample_bynode: 0.2808474117561186
+      feature_fraction: 0.2341130948533326
+      bagging_fraction: 0.4359195975133257
+      bagging_freq: 6
+      min_data_in_leaf: 126
+      scale_pos_weight: 1.1673887162587102
+
+  # - type: cb
+  #   n_seed_averaging: 3
+  #   use_dnn:
+  #     - 0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs64_2-transV2-ep80
+  #     - 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+  #     - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+  #   num_boost_round: 500
+  #   params:
+  #     loss_function:    Logloss
+  #     verbose:          False
+  #     random_state:     ${seed}
+  #     learning_rate:    0.05736122283668937
+  #     depth: 6
+  #     scale_pos_weight: 1.3101745821153825
+  #     l2_leaf_reg:      23.923606601604646
+  #     subsample:        0.7265234839181416
+  #     bagging_temperature: 0.27869099238718836
+  #     colsample_bylevel: 0.44736258874854395
+  #     min_data_in_leaf: 30
+  #     random_strength: 0.9028342886632712
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs64_2-transV2-ep80
+      - 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+    num_boost_round: 500
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.031129337134552803
+      lambda: 0.04505845306790353
+      alpha: 0.002190448562745996
+      max_depth: 4
+      min_child_weight: 4.4341936651048615
+      subsample: 0.49658768784673096
+      colsample_bytree: 0.39422559264271273
+      colsample_bylevel: 0.570681254843259
+      colsample_bynode: 0.32808394109399597
+      scale_pos_weight: 1.3841201600628985
+
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+      - 0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80
+    num_boost_round: 500
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.02697860939272997
+      lambda_l1: 0.024973839560521648
+      lambda_l2: 0.006308684663783449
+      max_depth: 4
+      num_leaves: 34
+      colsample_bytree: 0.2700681489215218
+      colsample_bynode: 0.2808474117561186
+      feature_fraction: 0.2341130948533326
+      bagging_fraction: 0.4359195975133257
+      bagging_freq: 6
+      min_data_in_leaf: 126
+      scale_pos_weight: 1.1673887162587102
+
+  # - type: cb
+  #   n_seed_averaging: 3
+  #   use_dnn:
+  #     - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+  #     - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+  #     - 0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80
+  #   num_boost_round: 500
+  #   params:
+  #     loss_function:    Logloss
+  #     verbose:          False
+  #     random_state:     ${seed}
+  #     learning_rate:    0.05736122283668937
+  #     depth: 6
+  #     scale_pos_weight: 1.3101745821153825
+  #     l2_leaf_reg:      23.923606601604646
+  #     subsample:        0.7265234839181416
+  #     bagging_temperature: 0.27869099238718836
+  #     colsample_bylevel: 0.44736258874854395
+  #     min_data_in_leaf: 30
+  #     random_strength: 0.9028342886632712
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+      - 0827-tip_finetune_onlyImage-swin_tiny_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-warmup5-bs_64_2-transV8-ep80
+    num_boost_round: 500
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.031129337134552803
+      lambda: 0.04505845306790353
+      alpha: 0.002190448562745996
+      max_depth: 4
+      min_child_weight: 4.4341936651048615
+      subsample: 0.49658768784673096
+      colsample_bytree: 0.39422559264271273
+      colsample_bylevel: 0.570681254843259
+      colsample_bynode: 0.32808394109399597
+      scale_pos_weight: 1.3841201600628985
+
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    num_boost_round: 500
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.02697860939272997
+      lambda_l1: 0.024973839560521648
+      lambda_l2: 0.006308684663783449
+      max_depth: 4
+      num_leaves: 34
+      colsample_bytree: 0.2700681489215218
+      colsample_bynode: 0.2808474117561186
+      feature_fraction: 0.2341130948533326
+      bagging_fraction: 0.4359195975133257
+      bagging_freq: 6
+      min_data_in_leaf: 126
+      scale_pos_weight: 1.1673887162587102
+
+  # - type: cb
+  #   n_seed_averaging: 3
+  #   use_dnn:
+  #     - 0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf
+  #     - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+  #   num_boost_round: 500
+  #   params:
+  #     loss_function:    Logloss
+  #     verbose:          False
+  #     random_state:     ${seed}
+  #     learning_rate:    0.05736122283668937
+  #     depth: 6
+  #     scale_pos_weight: 1.3101745821153825
+  #     l2_leaf_reg:      23.923606601604646
+  #     subsample:        0.7265234839181416
+  #     bagging_temperature: 0.27869099238718836
+  #     colsample_bylevel: 0.44736258874854395
+  #     min_data_in_leaf: 30
+  #     random_strength: 0.9028342886632712
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    num_boost_round: 500
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.031129337134552803
+      lambda: 0.04505845306790353
+      alpha: 0.002190448562745996
+      max_depth: 4
+      min_child_weight: 4.4341936651048615
+      subsample: 0.49658768784673096
+      colsample_bytree: 0.39422559264271273
+      colsample_bylevel: 0.570681254843259
+      colsample_bynode: 0.32808394109399597
+      scale_pos_weight: 1.3841201600628985
+
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+      - 0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf
+    num_boost_round: 500
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.02697860939272997
+      lambda_l1: 0.024973839560521648
+      lambda_l2: 0.006308684663783449
+      max_depth: 4
+      num_leaves: 34
+      colsample_bytree: 0.2700681489215218
+      colsample_bynode: 0.2808474117561186
+      feature_fraction: 0.2341130948533326
+      bagging_fraction: 0.4359195975133257
+      bagging_freq: 6
+      min_data_in_leaf: 126
+      scale_pos_weight: 1.1673887162587102
+
+  # - type: cb
+  #   n_seed_averaging: 3
+  #   use_dnn:
+  #     - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+  #     - 0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf
+  #   num_boost_round: 500
+  #   params:
+  #     loss_function:    Logloss
+  #     verbose:          False
+  #     random_state:     ${seed}
+  #     learning_rate:    0.05736122283668937
+  #     depth: 6
+  #     scale_pos_weight: 1.3101745821153825
+  #     l2_leaf_reg:      23.923606601604646
+  #     subsample:        0.7265234839181416
+  #     bagging_temperature: 0.27869099238718836
+  #     colsample_bylevel: 0.44736258874854395
+  #     min_data_in_leaf: 30
+  #     random_strength: 0.9028342886632712
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+      - 0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf
+    num_boost_round: 500
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.031129337134552803
+      lambda: 0.04505845306790353
+      alpha: 0.002190448562745996
+      max_depth: 4
+      min_child_weight: 4.4341936651048615
+      subsample: 0.49658768784673096
+      colsample_bytree: 0.39422559264271273
+      colsample_bylevel: 0.570681254843259
+      colsample_bynode: 0.32808394109399597
+      scale_pos_weight: 1.3841201600628985

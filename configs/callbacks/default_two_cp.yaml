@@ -1,0 +1,39 @@
+defaults:
+  - model_checkpoint
+  - early_stopping
+  - model_summary
+  - rich_progress_bar
+  - lr_monitor
+  - _self_
+
+model_checkpoint:
+  dirpath: ${paths.output_dir}/checkpoints
+  filename: "fold${data.fold}_epoch_{epoch:03d}"
+  monitor: "val/pauc"
+  mode: "max"
+  save_last: False
+  auto_insert_metric_name: False
+
+model_checkpoint2:
+  _target_: lightning.pytorch.callbacks.ModelCheckpoint
+  dirpath: ${paths.output_dir}/checkpoints_pauc_2024
+  filename: "fold${data.fold}_epoch_{epoch:03d}"
+  monitor: "val/pauc_2024"
+  mode: "max"
+  save_last: False
+  auto_insert_metric_name: False
+  verbose: False # verbosity mode
+  save_top_k: 1 # save k best models (determined by above metric)
+  save_weights_only: False # if True, then only the model’s weights will be saved
+  every_n_train_steps: null # number of training steps between checkpoints
+  train_time_interval: null # checkpoints are monitored at the specified time interval
+  every_n_epochs: null # number of epochs between checkpoints
+  save_on_train_epoch_end: null # whether to run checkpointing at the end of the training epoch or the end of validation
+
+early_stopping:
+  monitor: "val/pauc"
+  patience: 30
+  mode: "max"
+
+model_summary:
+  max_depth: -1

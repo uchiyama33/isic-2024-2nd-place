@@ -1,0 +1,33 @@
+name: 0722-convnextv2_base-efficientnet_b0-swinv2_base-eva02_small
+
+# add_noiseしてチューニング、訓練時にはadd_noiseしない
+
+dnn_predictions:
+  - name: 0717-convnextv2_base-transV2-lr1e-4-bs256
+    dir: /workspace/logs/train/runs/0717-convnextv2_base-transV2-lr1e-4-bs256/train_predictions
+  - name: 0721-efficientnet_b0-transV2-lr1e-4-bs256
+    dir: /workspace/logs/train/runs/0721-efficientnet_b0-transV2-lr1e-4-bs256/train_predictions
+  - name: 0721-swinv2_base-transV2-lr5e-5-bs256-drop02
+    dir: /workspace/logs/train/runs/0721-swinv2_base-transV2-lr5e-5-bs256-drop02/train_predictions
+  - name: 0722-eva02_small-transV2-lr5e-5-bs256-drop02
+    dir: /workspace/logs/train/runs/0722-eva02_small-transV2-lr5e-5-bs256-drop02/train_predictions
+
+params:
+  objective: "binary"
+  metric: "binary_logloss"
+  boosting_type: "gbdt"
+  verbosity: -1
+  seed: ${seed}
+  bagging_fraction: 0.8190147389019794
+  bagging_freq: 6
+  feature_fraction: 0.4
+  feature_pre_filter: False
+  lambda_l1: 0.11630154868044115
+  lambda_l2: 0.20096324806255952
+  min_child_samples: 100
+  num_leaves: 5
+  learning_rate: 0.005
+
+add_noise_train_preds: true
+num_boost_round: 3000
+early_stopping: 50

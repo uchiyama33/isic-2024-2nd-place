@@ -1,0 +1,19 @@
+_target_: src.data.isic2024_datamodule_tip_finetune.ISIC2024DataModule
+data_dir: ${paths.data_dir}/isic-2024-challenge
+batch_size: 128 # Needs to be divisible by the number of devices (e.g., if in a distributed setup)
+num_workers: 15
+pin_memory: True
+img_size: 224
+hdf5_train_name: train-image.hdf5
+hdf5_test_name: test-image.hdf5
+meta_csv_train_name: train-metadata.csv
+meta_csv_test_name: test-metadata.csv
+neg_sampling_ratio: 20
+kfold_df_name: df_train_preprocessed.parquet
+fold: 0
+n_fold: 5
+kfold_method: tsgkf
+transforms_version: 1
+corruption_rate: 0.3
+cat_lengths_tabular: [3,2,21,8]
+con_lengths_tabular: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]

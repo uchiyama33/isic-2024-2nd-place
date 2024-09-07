@@ -1,0 +1,28 @@
+name: 0809-logistic-tip_en_b0-swin_b-eva02_s-im_en_b0-cn_t_mt-gbdt_note
+
+version_fe: null
+
+dnn_predictions:
+  - name: 0804-tip_finetune-bs_64_8
+    dir: /workspace/logs/train/runs/0804-tip_finetune-bs_64_8/train_predictions
+  - name: 0721-swinv2_base-transV2-lr5e-5-bs256-drop02
+    dir: /workspace/logs/train/runs/0721-swinv2_base-transV2-lr5e-5-bs256-drop02/train_predictions
+  - name: 0722-eva02_small-transV2-lr5e-5-bs256-drop02
+    dir: /workspace/logs/train/runs/0722-eva02_small-transV2-lr5e-5-bs256-drop02/train_predictions
+  - name: 0806-image_meta-efficientnet_b0-lr5e-4-bs512-bn
+    dir: /workspace/logs/train/runs/0806-image_meta-efficientnet_b0-lr5e-4-bs512-bn/train_predictions
+  - name: 0807-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2
+    dir: /workspace/logs/train/runs/0807-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2/train_predictions
+use_logits: false
+
+gbdt_configs:
+  - name: 0808-0178notebook
+    dir: /workspace/logs/gbdt/runs/0808-0178notebook
+
+models:
+  - type: logistic
+    params:
+      penalty: l2
+      C: 1
+      random_state: ${seed}
+      max_iter: 100

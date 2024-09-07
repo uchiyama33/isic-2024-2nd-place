@@ -1,0 +1,5 @@
+_target_: src.models.components.scheduler.CosineAnnealingLR
+_partial_: true
+warmup_epochs: 10
+max_epochs: ${trainer.max_epochs}
+eta_min: 0.00001

@@ -1,0 +1,28 @@
+services:
+  app:
+    build:
+      context: .
+      network: host
+
+    container_name: isic2024
+    hostname: isic2024
+
+    network_mode: "host"
+    volumes:
+      - ../:/workspace/
+      # - $HOME/.Xauthority:/root/.Xauthority
+    working_dir: /workspace
+    shm_size: 64gb
+    stdin_open: true
+    tty: true
+    environment:
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: [ '0' ]
+              capabilities: [ gpu ]

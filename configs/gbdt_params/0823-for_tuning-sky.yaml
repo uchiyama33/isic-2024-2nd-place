@@ -1,0 +1,314 @@
+name: 0823-for_tuning-sky
+
+version_fe: 1
+
+over_sampling_ratio: 0.003
+under_sampling_ratio: 0.01
+rank_avg: false
+dnn_binning: false
+
+dnn_predictions:
+  - name: 0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30
+    dir: /workspace/logs/train/runs/0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30/train_predictions
+
+  # - name: 
+  #   dir: /workspace/logs/train/runs//train_predictions
+
+use_logits: false
+
+models:
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    num_boost_round: 200
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.03
+      lambda_l1: 0.035075365858318566
+      lambda_l2: 0.002469992893009852
+      max_depth: 5
+      num_leaves: 83
+      colsample_bytree: 0.5114626962457056
+      colsample_bynode: 0.7955065151097146
+      bagging_fraction: 0.5507355165566765
+      bagging_freq: 6
+      min_data_in_leaf: 7
+      scale_pos_weight: 2.339818161670898
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    num_boost_round: 200
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate: 0.03
+      max_depth: 5
+      scale_pos_weight: 2.0915261388501345
+      l2_leaf_reg: 1.221419965600047
+      subsample: 0.7873481479047831
+      min_data_in_leaf: 5
+      random_strength: 1.1063469800953651
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    num_boost_round: 200
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.03
+      lambda: 5.754924235332028
+      alpha: 0.002084598963324067
+      max_depth: 4
+      subsample: 0.8733262420690672
+      colsample_bytree: 0.5879583601701411
+      colsample_bylevel: 0.5878139554455062
+      colsample_bynode: 0.6696455486176942
+      scale_pos_weight: 3.7911611468335873
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      # - 0808-tip_frozen_onlyImage-convnextv2_nano_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr1e-3-transV2-neg10-ep50
+    num_boost_round: 200
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.03
+      lambda_l1: 0.0592494163746506
+      lambda_l2: 0.11028237732557318
+      max_depth: 4
+      num_leaves: 34
+      colsample_bytree: 0.6986221132007755
+      colsample_bynode: 0.47548298499927616
+      bagging_fraction: 0.9725139264006484
+      bagging_freq: 1
+      min_data_in_leaf: 62
+      scale_pos_weight: 0.8013523678765682
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      # - 0808-tip_frozen_onlyImage-convnextv2_nano_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr1e-3-transV2-neg10-ep50
+    num_boost_round: 200
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      # max_depth:        7　入れ忘れ未調整
+      learning_rate: 0.03
+      max_depth: 5
+      scale_pos_weight: 3.8316742165119746
+      l2_leaf_reg: 0.220601026409132
+      subsample: 0.5778763294094978
+      min_data_in_leaf: 48
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      # - 0808-tip_frozen_onlyImage-convnextv2_nano_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr1e-3-transV2-neg10-ep50
+    num_boost_round: 200
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.03
+      lambda: 0.972580651471495
+      alpha: 0.059163035784056135
+      max_depth: 4
+      subsample: 0.9233771383110415
+      colsample_bytree: 0.7000231467839317
+      colsample_bylevel: 0.7060686791229422
+      colsample_bynode: 0.5034739507546538
+      scale_pos_weight: 3.2957928785662003
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 200
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      lambda_l1: 0.08758718919397321
+      lambda_l2: 0.0039689175176025465
+      learning_rate: 0.03231007103195577
+      max_depth: 4
+      num_leaves: 103
+      colsample_bytree: 0.8329551585827726 
+      colsample_bynode: 0.4025961355653304
+      bagging_fraction: 0.7738954452473223
+      bagging_freq: 4
+      min_data_in_leaf: 85
+      scale_pos_weight: 2.7984184778875543
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf
+    num_boost_round: 200
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      max_depth:        7
+      learning_rate:    0.06936242010150652
+      scale_pos_weight: 2.6149345838209532
+      l2_leaf_reg:      6.216113851699493
+      subsample:        0.6249261779711819
+      min_data_in_leaf: 24
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf
+    num_boost_round: 200
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate:      0.08501257473292347 
+      lambda:             8.879624125465703 
+      alpha:              0.6779926606782505 
+      max_depth:          6 
+      subsample:          0.6012681388711075 
+      colsample_bytree:   0.8437772277074493 
+      colsample_bylevel:  0.5476090898823716 
+      colsample_bynode:   0.9928601203635129 
+      scale_pos_weight:   3.29440313334688
+
+  # my tuning without dnn
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 200
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.03
+      lambda_l1: 0.017841434163032605
+      lambda_l2: 0.05872603574120973
+      max_depth: 8
+      num_leaves: 187
+      colsample_bytree: 0.8352341539647485
+      colsample_bynode: 0.7131918647166682
+      bagging_fraction: 0.4234193432837853
+      bagging_freq: 4
+      min_data_in_leaf: 32
+      scale_pos_weight: 2.33929357177971
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 200
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate: 0.03
+      max_depth: 5
+      scale_pos_weight: 3.7815433304843205
+      l2_leaf_reg: 8.942179821885434
+      subsample: 0.4445061187874661
+      min_data_in_leaf: 54
+      random_strength: 1.1972615114360154
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn: []
+    num_boost_round: 200
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.03 
+      lambda: 0.05019062631139
+      alpha: 0.4251584944688427
+      max_depth: 4
+      subsample: 0.4894509826918165
+      colsample_bytree: 0.9643257193792079
+      colsample_bylevel: 0.7953652823196099
+      colsample_bynode: 0.9521065521666686
+      scale_pos_weight: 2.182739568280705
+
+
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    num_boost_round: 200
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.03
+      lambda_l1: 0.035075365858318566
+      lambda_l2: 0.002469992893009852
+      max_depth: 5
+      num_leaves: 83
+      colsample_bytree: 0.5114626962457056
+      colsample_bynode: 0.7955065151097146
+      bagging_fraction: 0.5507355165566765
+      bagging_freq: 6
+      min_data_in_leaf: 7
+      scale_pos_weight: 2.339818161670898
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    num_boost_round: 200
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate: 0.03
+      max_depth: 5
+      scale_pos_weight: 2.0915261388501345
+      l2_leaf_reg: 1.221419965600047
+      subsample: 0.7873481479047831
+      min_data_in_leaf: 5
+      random_strength: 1.1063469800953651
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+      - 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    num_boost_round: 200
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.03
+      lambda: 5.754924235332028
+      alpha: 0.002084598963324067
+      max_depth: 4
+      subsample: 0.8733262420690672
+      colsample_bytree: 0.5879583601701411
+      colsample_bylevel: 0.5878139554455062
+      colsample_bynode: 0.6696455486176942
+      scale_pos_weight: 3.7911611468335873

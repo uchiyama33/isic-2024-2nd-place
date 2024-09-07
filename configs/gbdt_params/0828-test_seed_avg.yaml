@@ -1,0 +1,109 @@
+name: 0828-test_seed_avg
+
+version_fe: 3
+version_dnn_fe: null
+
+over_sampling_ratio: 0.003
+under_sampling_ratio: 0.01
+rank_avg: false
+dnn_binning: false
+tuning_ensemble_weights: true
+dnn_noise_std: null
+
+dnn_predictions:
+  - name: 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+    dir: /workspace/logs/train/runs/0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf/train_predictions
+  - name: 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    dir: /workspace/logs/train/runs/0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf/train_predictions
+  - name: 0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30
+    dir: /workspace/logs/train/runs/0822-tip_frozen-convnextv2_nano_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep30/train_predictions
+  - name: 0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-tsgkf/train_predictions
+  - name: 0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-eva02_small-sep_head-transV6-lr1e-3-target_decay001-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-tsgkf/train_predictions
+  - name: 0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0821-beitv2_base-sep_head-transV8-lr1e-3-target_decay001-warmup50-wd1e-2-bs32_8-mixup-ep100-neg3-tsgkf/train_predictions
+  - name: 0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0824-swinv2_small-transV2-lr1e-3-target_decay001-bs32_8-drop01-ep200-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0824-eva02_small-sep_head-transV8-lr1e-3-target_decay0008-warmup50-wd1e-2-drop01-bs32_8-ep80-neg3-cluster7t5-tsgkf/train_predictions
+  - name: 0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep50
+    dir: /workspace/logs/train/runs/0825-tip_finetune_onlyImage-convnextv2_nano_scratch_l2d192h8-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep200-tsgkf-lr1e-3-transV2-ep50/train_predictions
+  - name: 0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf
+    dir: /workspace/logs/train/runs/0827-deit3_small-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-tsgkf/train_predictions
+  - name: 0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf
+    dir: /workspace/logs/train/runs/0828-resnext50-transV2-lr1e-3-target_decay001-bs32_8-ep200-neg3-cluster7t5-tsgkf/train_predictions
+
+  # - name: 
+  #   dir: /workspace/logs/train/runs//train_predictions
+
+use_logits: false
+
+models:
+  # tuning mean-std, 200 trials
+  - type: lgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    not_use_col_keywards: 
+      - ud_
+    num_boost_round: 805
+    params:
+      objective: "binary"
+      verbosity: -1
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      learning_rate: 0.014408561767776523
+      lambda_l1: 1.3374396701545364
+      lambda_l2: 0.0021146631020895913
+      max_depth: 4
+      num_leaves: 229
+      colsample_bytree: 0.496940625436117
+      colsample_bynode: 0.47067623507531015
+      bagging_fraction: 0.9981745225595143
+      bagging_freq: 4
+      min_data_in_leaf: 71
+      scale_pos_weight: 2.947324068359328
+
+  - type: cb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    not_use_col_keywards: 
+      - ud_
+    num_boost_round: 879
+    params:
+      loss_function:    Logloss
+      verbose:          False
+      random_state:     ${seed}
+      learning_rate: 0.01502996236116846
+      max_depth: 4
+      scale_pos_weight: 3.6361198142754994
+      l2_leaf_reg: 9.953400188917042
+      subsample: 0.733882122289605
+      min_data_in_leaf: 100
+      random_strength: 1.965463430282266
+
+  - type: xgb
+    n_seed_averaging: 3
+    use_dnn:
+      - 0821-convnextv2_tiny-meta_target03-transV2-lr1e-3-target_decay001-bs128_2-ep100-neg5-tsgkf
+      - 0821-image_meta-efficientnet_b0-lr5e-4-bs256-ep50-neg5-tsgkf
+    not_use_col_keywards: 
+      - ud_
+    num_boost_round: 526
+    params:
+      objective: "binary:logistic"
+      tree_method:        hist
+      random_state:       ${seed}
+      learning_rate: 0.02366340532031056
+      lambda: 0.5074679961458715
+      alpha: 0.04194199899113613
+      max_depth: 4
+      subsample: 0.7601262966199371
+      colsample_bytree: 0.41712835190525505
+      colsample_bylevel: 0.6550367634306475
+      colsample_bynode: 0.46912508504670875
+      scale_pos_weight: 3.9394624611740583

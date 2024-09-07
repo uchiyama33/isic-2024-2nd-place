@@ -1,0 +1,67 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /callbacks: default_no_es
+  - override /model: tip_finetune
+  - override /data: isic2024_tip_finetune
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tip_finetune"]
+
+model:
+  compile: true
+  optimizer:
+    lr: 3e-3
+    weight_decay: 1e-4
+  scheduler:
+    num_warmup_steps: 0
+  net:
+    finetune_strategy_image: frozen
+    finetune_strategy_tabular: frozen
+    finetune_strategy_multimodal: frozen
+    encoder_image:
+      model_name: tf_efficientnet_b2.ns_jft_in1k
+    encoder_tabular:
+      tabular_embedding_dim: 384
+      num_layers: 3
+      num_heads: 6
+    encoder_multimodal:
+      multimodal_embedding_dim: 384
+      num_layers: 3
+      num_heads: 6
+    use_tabular: false
+    use_multimodal: false
+    ckpt_path: /workspace/logs/train/runs/0808-tip_pretrain-efficientnet_b2_l3d384-tabV3-transV8-bs_64_8-neg50-ep400/checkpoints/fold${data.fold}_epoch_399.ckpt
+    dropout_classifier: 0.05
+
+data:
+  img_size: 260
+  batch_size: 64
+  transforms_version: 2
+  neg_sampling_ratio: 10
+  tabular_data_version: 3  
+  cat_lengths_tabular: [3,2,21,8,6]
+  con_lengths_tabular: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+
+
+trainer:
+  max_epochs: 50
+  accumulate_grad_batches: 8
+  check_val_every_n_epoch : 1
+  # gradient_clip_val: 2.0
+
+experiment_name: 0808-tip_frozen_onlyImage-efficientnet_b2_l3d384-tabV3-transV8-lr5e-4-warmup50-bs_64_8-neg50-ep400-lr3e-3-transV2-neg10-ep50
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

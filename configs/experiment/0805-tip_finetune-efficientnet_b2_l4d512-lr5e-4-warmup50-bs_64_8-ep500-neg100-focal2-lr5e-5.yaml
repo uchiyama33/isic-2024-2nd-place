@@ -1,0 +1,59 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /model: tip_finetune
+  - override /data: isic2024_tip_finetune
+  - override /model/loss: focal
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tip_finetune"]
+
+model:
+  compile: true
+  optimizer:
+    lr: 5e-5
+    weight_decay: 1e-3
+  scheduler:
+    num_warmup_steps: 30
+
+  net:
+    encoder_image:
+      model_name: tf_efficientnet_b2.ns_jft_in1k
+    encoder_tabular:
+      tabular_embedding_dim: 512
+      num_layers: 4
+      num_heads: 8
+    encoder_multimodal:
+      multimodal_embedding_dim: 512
+      num_layers: 4
+      num_heads: 8
+    ckpt_path: /workspace/logs/train/runs/0805-tip_pretrain-efficientnet_b2_l4d512-bs_64_8-ep500/checkpoints/fold${data.fold}_epoch_449.ckpt
+    dropout_classifier: 0.05
+
+data:
+  img_size: 260
+  batch_size: 64
+  transforms_version: 2
+  neg_sampling_ratio: 100
+
+trainer:
+  max_epochs: 250
+  accumulate_grad_batches: 4
+  check_val_every_n_epoch : 1
+  gradient_clip_val: 2.0
+
+experiment_name: 0805-tip_finetune-efficientnet_b2_l4d512-lr5e-4-warmup50-bs_64_8-ep500-neg100-focal2-lr5e-5-wd1e-3
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

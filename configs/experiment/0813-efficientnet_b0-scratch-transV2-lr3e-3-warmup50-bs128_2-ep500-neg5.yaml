@@ -1,0 +1,45 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /callbacks: default_no_es
+#   - override /data: mnist
+#   - override /model: mnist
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["tf_efficientnet_b0.ns_jft_in1k"]
+
+
+model:
+  compile: true
+  scheduler:
+    num_warmup_steps: 50
+  optimizer:
+    lr: 3e-3
+  net:
+    model_name: tf_efficientnet_b0.ns_jft_in1k
+    pretrained: false
+
+data:
+  img_size: 224
+  batch_size: 128
+  transforms_version: 2
+  neg_sampling_ratio: 5
+
+trainer:
+  max_epochs: 500
+  accumulate_grad_batches: 2
+
+experiment_name: 0813-efficientnet_b0-scratch-transV2-lr3e-3-warmup50-bs128_2-ep500-neg5
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

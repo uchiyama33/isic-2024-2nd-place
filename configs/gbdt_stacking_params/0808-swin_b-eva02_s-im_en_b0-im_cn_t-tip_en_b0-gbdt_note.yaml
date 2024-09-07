@@ -1,0 +1,45 @@
+name: 0808-swin_b-eva02_s-im_en_b0-im_cn_t-tip_en_b0-gbdt_note
+
+version_fe: null
+
+dnn_predictions:
+  - name: 0721-swinv2_base-transV2-lr5e-5-bs256-drop02
+    dir: /workspace/logs/train/runs/0721-swinv2_base-transV2-lr5e-5-bs256-drop02/train_predictions
+  - name: 0722-eva02_small-transV2-lr5e-5-bs256-drop02
+    dir: /workspace/logs/train/runs/0722-eva02_small-transV2-lr5e-5-bs256-drop02/train_predictions
+  - name: 0724-image_meta-efficientnet_b0-lr5e-4-bs512-bn
+    dir: /workspace/logs/train/runs/0724-image_meta-efficientnet_b0-lr5e-4-bs512-bn/train_predictions
+  - name: 0725-image_meta-convnextv2_tiny-lr5e-4-bs512-bn-inter_ce-metaPre10
+    dir: /workspace/logs/train/runs/0725-image_meta-convnextv2_tiny-lr5e-4-bs512-bn-inter_ce-metaPre10/train_predictions
+  - name: 0804-tip_finetune-bs_64_8
+    dir: /workspace/logs/train/runs/0804-tip_finetune-bs_64_8/train_predictions
+use_logits: false
+
+gbdt_configs:
+  - name: 0808-0178notebook
+    dir: /workspace/logs/gbdt/runs/0808-0178notebook
+
+models:
+  - type: lgb
+    params:
+      objective: "binary"
+      verbosity: -1
+      n_iter: 100
+      boosting_type: "gbdt"
+      random_state: ${seed}
+      bagging_fraction: 1.0
+      bagging_freq: 0
+      feature_fraction: 0.4
+      feature_pre_filter: False
+      lambda_l1: 9.080573908495493e-06
+      lambda_l2: 1.022151393545849e-05
+      min_child_samples: 20
+      num_leaves: 3
+      learning_rate: 0.05
+
+  - type: cb
+    params:
+      objective: 'Logloss'
+      random_state: ${seed}
+      verbose: False
+      iterations: 100

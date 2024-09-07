@@ -1,0 +1,54 @@
+name: 0727-focal-cn_b-en_b0-swin_b-eva02_s-im_en_b0-im_swin_b-im_cn_t
+
+dnn_predictions:
+  - name: 0717-convnextv2_base-transV2-lr1e-4-bs256
+    dir: /workspace/logs/train/runs/0717-convnextv2_base-transV2-lr1e-4-bs256/train_predictions
+  - name: 0721-efficientnet_b0-transV2-lr1e-4-bs256
+    dir: /workspace/logs/train/runs/0721-efficientnet_b0-transV2-lr1e-4-bs256/train_predictions
+  - name: 0721-swinv2_base-transV2-lr5e-5-bs256-drop02
+    dir: /workspace/logs/train/runs/0721-swinv2_base-transV2-lr5e-5-bs256-drop02/train_predictions
+  - name: 0722-eva02_small-transV2-lr5e-5-bs256-drop02
+    dir: /workspace/logs/train/runs/0722-eva02_small-transV2-lr5e-5-bs256-drop02/train_predictions
+  - name: 0724-image_meta-efficientnet_b0-lr5e-4-bs512-bn
+    dir: /workspace/logs/train/runs/0724-image_meta-efficientnet_b0-lr5e-4-bs512-bn/train_predictions
+  - name: 0724-image_meta-swinv2_base-lr5e-4-bs512-bn-inter_ce
+    dir: /workspace/logs/train/runs/0724-image_meta-swinv2_base-lr5e-4-bs512-bn-inter_ce/train_predictions
+  - name: 0725-image_meta-convnextv2_tiny-lr5e-4-bs512-bn-inter_ce-metaPre10
+    dir: /workspace/logs/train/runs/0725-image_meta-convnextv2_tiny-lr5e-4-bs512-bn-inter_ce-metaPre10/train_predictions
+use_logits: false
+
+lightgbm:
+  loss: focal_loss
+  gamma_focal_loss: 2
+  params:
+    # objective: null
+    # metric: "binary_logloss"
+    boosting_type: "gbdt"
+    verbosity: -1
+    seed: ${seed}
+    bagging_fraction: 0.5183783072886006
+    bagging_freq: 1
+    feature_fraction: 0.41600000000000004
+    feature_pre_filter: False
+    lambda_l1: 5.288290588274316e-08
+    lambda_l2: 8.348806594782424
+    min_child_samples: 10
+    num_leaves: 2
+    learning_rate: 0.005
+  num_boost_round: 3000
+  early_stopping: 100
+
+catboost:
+  # loss: focal_loss
+  # gamma_focal_loss: 2
+  params:
+    objective: 'Logloss'
+    random_state: ${seed}
+    colsample_bylevel: 0.3
+    learning_rate: 0.01
+    max_depth: 8
+    l2_leaf_reg: 5
+    verbose: 1
+    iterations: 3000
+    early_stopping_rounds: 100
+    metric_period: 20

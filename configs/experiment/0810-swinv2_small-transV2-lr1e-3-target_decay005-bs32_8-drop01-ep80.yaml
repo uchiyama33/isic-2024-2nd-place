@@ -1,0 +1,48 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /callbacks: default_no_es
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["swinv2_base_window12to16_192to256.ms_in22k_ft_in1k"]
+
+
+model:
+  compile: true
+  optimize_config:
+    mode: target_decay
+    target_name: net._orig_mod.model
+    lr_base: ${model.optimizer.lr}
+    lr_decay_coef: 0.05
+  scheduler:
+    num_warmup_steps: 10
+  optimizer:
+    lr: 1e-3
+  net:
+    model_name: swinv2_small_window8_256.ms_in1k
+    dropout_encoder: 0.0
+    dropout_head: 0.1
+
+data:
+  img_size: 256
+  batch_size: 32
+  transforms_version: 2
+
+trainer:
+  max_epochs: 80
+  accumulate_grad_batches: 8
+
+experiment_name: 0810-swinv2_small-transV2-lr1e-3-target_decay005-bs32_8-drop01-ep80
+logger:
+  wandb:
+    tags: ${tags}
+    name: ${experiment_name}-fold${data.fold}
+log_dir: ${paths.log_dir}/${task_name}/runs/${experiment_name}
+hydra:
+  run:
+    dir: ${log_dir}

@@ -1,0 +1,14 @@
+defaults:
+  - model_checkpoint
+  - model_summary
+  - rich_progress_bar
+  - lr_monitor
+  - _self_
+
+model_checkpoint:
+  dirpath: ${paths.output_dir}/checkpoints
+  save_top_k: 0
+  save_last: True
+
+model_summary:
+  max_depth: -1
