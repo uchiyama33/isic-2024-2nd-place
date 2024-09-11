@@ -25,6 +25,9 @@ All required Python packages are listed in the `pip_packages/requirements.txt` f
   python gbdt.py
   ```
 
+## Trained Weights
+[https://www.kaggle.com/datasets/tomoon33/isic2024-training-logs/](https://www.kaggle.com/datasets/tomoon33/isic2024-training-logs/)
+
 ## Inference
 
 The submission notebook is `isic2024-submit.ipynb`.
